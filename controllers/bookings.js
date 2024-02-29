@@ -6,13 +6,26 @@ const Company = require("../models/Company");
 //@access   Public
 exports.getBookings = async (req, res, next) => {
   let query;
-  
 
+  if (req.user.role !== "admin") {
     query = Booking.find({ user: req.user.id }).populate({
       path: "company",
       select: "name address website description tel",
     });
-    //If you are an admin, you can see all!
+  } else {
+    if (req.params.companyId) {
+      console.log(req.params.companyId);
+      query = Booking.find({ company: req.params.companyId }).populate({
+        path: "company",
+        select: "name address website description tel",
+      });
+    } else {
+      query = Booking.find().populate({
+        path: "company",
+        select: "name address website description tel",
+      });
+    }
+  }
 
   try {
     const bookings = await query;
@@ -34,10 +47,10 @@ exports.getBookings = async (req, res, next) => {
 //@access   Public
 exports.getBooking = async (req, res, next) => {
   try {
-      const booking = await Booking.findById(req.params.id).populate({
-        path: "company",
-        select: "name address website description tel",
-      });
+    const booking = await Booking.findById(req.params.id).populate({
+      path: "company",
+      select: "name address website description tel",
+    });
 
     if (!booking) {
       return res.status(404).json({
