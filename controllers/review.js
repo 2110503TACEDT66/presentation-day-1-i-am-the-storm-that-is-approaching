@@ -101,14 +101,13 @@ exports.deleteReview = async (req, res, next) => {
       return res.status(404).json({ success: false, msg: "Review not found" });
     }
 
-    // Ensure user is the review owner
     if (review.user.toString() !== req.user.id) {
       return res
         .status(401)
         .json({ success: false, msg: "Not authorized to delete this review" });
     }
 
-    await review.remove();
+    await Review.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,

@@ -14,7 +14,7 @@ router
   .post(protect, authorize("admin", "user"), addReview); //only login user can add a review
 
 router
-  .route("/:reviewId")
+  .route("/:id")
   .get(protect, getReviews)
   .put(protect, authorize("admin", "user"), updateReview) //only original reviewer or admin can update the review
   .delete(protect, authorize("admin"), deleteReview); // admin can only delte the review
